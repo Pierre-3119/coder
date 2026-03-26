@@ -15,10 +15,10 @@
 	},
 
 	"mounts": [
-		"source=${localEnv:HOME}/repos/github/test-backend-dotnet,target=/workspace/repos,type=bind"
+		"source=${localEnv:HOME}/application,target=/workspace/application,type=bind"
 	],
 
-	"workspaceFolder": "/workspace/repos",
+	"workspaceFolder": "/workspace/application",
 
 	// Configure tool-specific properties.
 	// "customizations": {
