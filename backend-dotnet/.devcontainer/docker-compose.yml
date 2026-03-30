@@ -15,7 +15,7 @@ services:
       context: .
       dockerfile: Dockerfile
     container_name: dotnet-sdk
-    command: sleep infinity
+    # command: sleep infinity
     # depends_on:
     #   - postgres
 
