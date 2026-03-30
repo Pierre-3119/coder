@@ -29,7 +29,7 @@
 	// ==========================================================================
 	"customizations": {
 		"coder": {
-			"name": "Dotnet-backend"
+			"name": "dotnet-backend"
 		},
 		// Configure properties specific to VS Code.
 		"vscode": {
