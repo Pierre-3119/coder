@@ -8,13 +8,15 @@
 	// ==========================================================================
 	// Docker Compose Configuration
 	// ==========================================================================
-	"dockerComposeFile": "docker-compose.yml",
-	"service": "sdk",
+	// "dockerComposeFile": "docker-compose.yml",
+	// "service": "sdk",
+	"build" : {
+		"dockerfile": "Dockerfile"	
+	}, 
 	"mounts": [
 		"source=${localEnv:HOME}/application,target=/workspace/application,type=bind"
 	],
 	"workspaceFolder": "/workspace/application",
-	"overrideCommand": true,
 
 	// ==========================================================================
 	// Container Features More info: https://containers.dev/features.
