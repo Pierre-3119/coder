@@ -14,8 +14,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: dotnet-containerr
-    command: sleep infinity
+    container_name: dotnet-container
+    # command: sleep infinity
     # depends_on:
     #   - postgres
 
