@@ -14,6 +14,7 @@
 		"source=${localEnv:HOME}/application,target=/workspace/application,type=bind"
 	],
 	"workspaceFolder": "/workspace/application",
+	"overrideCommand": true,
 
 	// ==========================================================================
 	// Container Features More info: https://containers.dev/features.
