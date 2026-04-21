@@ -1,17 +1,17 @@
 // For format details, see https://aka.ms/devcontainer.json.
 {
 	// ==========================================================================
-	// Frontend React Dev Container
+	// Backend Dotnet Dev Container
 	// ==========================================================================
-	"name": "Frontend React Dev Container",
+	"name": "Backend Dotnet Dev Container",
 
 	// ==========================================================================
 	// Docker Compose Configuration
 	// ==========================================================================
 	"dockerComposeFile": "docker-compose.yml",
-	"service": "node",
+	"service": "sdk",
 	"mounts": [
-		"source=${localEnv:HOME}/application,target=/workspace/application,type=bind"
+		"source=${localEnv:HOME}/backend-application,target=/workspace/application,type=bind"
 	],
 	"workspaceFolder": "/workspace/application",
 
@@ -21,7 +21,7 @@
 	"features": 
 	{
 		// Install Docker in Docker to allow running Docker commands within the container.
-		"ghcr.io/devcontainers/features/docker-in-docker": { "version": "29.3.1-1~debian.13~trixie", "moby": false}
+		"ghcr.io/devcontainers/features/docker-in-docker": { "version": "29.3.1-1~debian.12~bookworm", "moby": false}
 	},
 
 	// ==========================================================================
@@ -29,7 +29,7 @@
 	// ==========================================================================
 	"customizations": {
 		"coder": {
-			"name": "frontend-react"
+			"name": "dotnet-backend"
 		},
 		// Configure properties specific to VS Code.
 		"vscode": {
@@ -47,13 +47,33 @@
 	// ==========================================================================
 	// Automaticaly forward these ports from the container to the host.
 	"forwardPorts": [
+			5432,
+			8888,
+			389,
+			8081
 	],
 
 	// Use 'portsAttributes' to set default properties for specific forwarded ports. 
 	// More info: https://containers.dev/implementors/json_reference/#port-attributes
 	"portsAttributes": {
+		"5432": {
+			"label": "PostgreSQL",
+			"onAutoForward": "silent"
+		},
+		"8888": {
+			"label": "pgAdmin",
+			"onAutoForward": "silent"
+		},
+		"389": {
+			"label": "LDAP",
+			"onAutoForward": "silent"
+		},
+		"8081": {
+			"label": "phpLDAPadmin",
+			"onAutoForward": "silent"
+		}
 	},
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "node --version"
+	"postCreateCommand": "dotnet --version"
 }

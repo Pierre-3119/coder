@@ -16,7 +16,7 @@ locals {
   # (Docker-in-Docker) and Node.js.
   workspace_image = "codercom/enterprise-node:ubuntu"
 
-  devcontainer_repos_url = "https://github.com/Pierre-3119/coder"
+  main_workspace_repos_url = "https://github.com/Pierre-3119/coder"
 }
 
 variable "docker_socket" {
@@ -25,12 +25,21 @@ variable "docker_socket" {
   type        = string
 }
 
-data "coder_parameter" "repo_url" {
+data "coder_parameter" "repo_frontend_url" {
   type         = "string"
-  name         = "repo_url"
+  name         = "repo_frontend_url"
   display_name = "Git Repository"
-  description  = "Enter the URL of the Git repository to clone into your workspace."
-  default      = "https://github.com/Pierre-3119/backend-dotnet"
+  description  = "Enter the URL of your frontend repository to clone into your workspace."
+  default      = "https://github.com/Pierre-3119/my-react-frontend"
+  mutable      = true
+}
+
+data "coder_parameter" "repo_backend_url" {
+  type         = "string"
+  name         = "repo_backend_url"
+  display_name = "Git Repository"
+  description  = "Enter the URL of your backend repository to clone into your workspace."
+  default      = "https://github.com/Pierre-3119/my-dotnet-backend"
   mutable      = true
 }
 
@@ -174,29 +183,45 @@ module "devcontainers-cli" {
   version = "~> 1.0"
 }
 
-# Clone repos containing devcontainers to the workspace. See
+# Clone repos containing devcontainers/agents. See
 # https://registry.coder.com/modules/coder/git-clone/coder for more details and configuration options.
-module "git-clone_devcontainer" {
+module "git-clone-main-workspace" {
   count    = data.coder_workspace.me.start_count
   source   = "registry.coder.com/coder/git-clone/coder"
   agent_id = coder_agent.main.id
-  url      = local.devcontainer_repos_url
+  url      = local.main_workspace_repos_url
   base_dir = "~"
-  folder_name = "devcontainer"
+  folder_name = "main-workspace"
   # This ensures that the latest non-breaking version of the module gets
   # downloaded, you can also pin the module version to prevent breaking
   # changes in production.
   version = "~> 1.0"
 }
 
-# Clone repos containing application code
-module "git-clone_application_code" {
+# Clone repos containing frontend code. See
+# https://registry.coder.com/modules/coder/git-clone/coder for more details and configuration options.
+module "git-clone_frontend_code" {
   count    = data.coder_workspace.me.start_count
   source   = "registry.coder.com/coder/git-clone/coder"
   agent_id = coder_agent.main.id
-  url      = data.coder_parameter.repo_url.value
+  url      = data.coder_parameter.repo_frontend_url.value
   base_dir = "~"
-  folder_name = "application"
+  folder_name = "frontend-application"
+  # This ensures that the latest non-breaking version of the module gets
+  # downloaded, you can also pin the module version to prevent breaking
+  # changes in production.
+  version = "~> 1.0"
+}
+
+# Clone repos containing backend code. See
+# https://registry.coder.com/modules/coder/git-clone/coder for more details and configuration options.
+module "git-clone_backend_code" {
+  count    = data.coder_workspace.me.start_count
+  source   = "registry.coder.com/coder/git-clone/coder"
+  agent_id = coder_agent.main.id
+  url      = data.coder_parameter.repo_backend_url.value
+  base_dir = "~"
+  folder_name = "backend-application"
   # This ensures that the latest non-breaking version of the module gets
   # downloaded, you can also pin the module version to prevent breaking
   # changes in production.
@@ -204,16 +229,16 @@ module "git-clone_application_code" {
 }
 
 # Automatically start the devcontainer for the workspace.
-resource "coder_devcontainer" "repo" {
+resource "coder_devcontainer" "backend-dotnet" {
   count            = data.coder_workspace.me.start_count
   agent_id         = coder_agent.main.id
-  workspace_folder = "~/${module.git-clone_devcontainer[0].folder_name}/backend-dotnet"
+  workspace_folder = "~/${module.git-clone-main-workspace[0].folder_name}/templates/devfactory/backend-dotnet"
 }
 
 resource "coder_devcontainer" "frontend-react" {
   count            = data.coder_workspace.me.start_count
   agent_id         = coder_agent.main.id
-  workspace_folder = "~/${module.git-clone_devcontainer[0].folder_name}/frontend-react"
+  workspace_folder = "~/${module.git-clone-main-workspace[0].folder_name}/templates/devfactory/frontend-react"
 }
 
 resource "docker_volume" "home_volume" {
