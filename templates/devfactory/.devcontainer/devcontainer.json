@@ -1,0 +1,61 @@
+// For format details, see https://aka.ms/devcontainer.json.
+{
+  "name": "DevFactory Dev Container",
+  "dockerComposeFile": "docker-compose.yml",
+  "service": "dev",
+  "workspaceFolder": "/workspace/devfactory",
+  "mounts": [
+    "source=${localWorkspaceFolder},target=/workspace/devfactory,type=bind"
+  ],
+  "features": {
+    "ghcr.io/devcontainers/features/docker-in-docker": {
+      "version": "latest",
+      "moby": false
+    }
+  },
+  "customizations": {
+    "coder": {
+      "name": "devfactory"
+    },
+    "vscode": {
+      "settings": {},
+      "extensions": [
+        "github.copilot",
+        "github.copilot-chat",
+        "sonarsource.sonarlint-vscode",
+        "ms-dotnettools.csdevkit",
+        "dbaeumer.vscode-eslint"
+      ]
+    }
+  },
+  "forwardPorts": [
+    3000,
+    5432,
+    8888,
+    389,
+    8081
+  ],
+  "portsAttributes": {
+    "3000": {
+      "label": "Frontend",
+      "onAutoForward": "openBrowser"
+    },
+    "5432": {
+      "label": "PostgreSQL",
+      "onAutoForward": "silent"
+    },
+    "8888": {
+      "label": "pgAdmin",
+      "onAutoForward": "silent"
+    },
+    "389": {
+      "label": "LDAP",
+      "onAutoForward": "silent"
+    },
+    "8081": {
+      "label": "phpLDAPadmin",
+      "onAutoForward": "silent"
+    }
+  },
+  "postCreateCommand": "dotnet --version && node --version"
+}

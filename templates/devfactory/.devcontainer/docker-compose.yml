@@ -1,0 +1,65 @@
+# ==============================================================================
+# DevFactory Unified Dev Container - Docker Compose Configuration
+# ==============================================================================
+
+services:
+  dev:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: devfactory-dev
+    command: /bin/sh -c "while sleep 1000; do :; done"
+    depends_on:
+      - postgres
+
+  postgres:
+    image: postgres
+    restart: always
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=dbtest
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=LocalPass!
+
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: pgadmin
+    restart: always
+    ports:
+      - "8888:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=LocalPass!
+    depends_on:
+      - postgres
+
+  ldap:
+    cap_add:
+      - SYS_ADMIN
+      - DAC_READ_SEARCH
+    image: mnorsic/samba-ad
+    container_name: ldap
+    environment:
+      - REALM=MYCORP.CORP
+      - DOMAIN=MYCORP
+      - DOMAIN_DN=DC=mycorp,DC=corp
+      - ADMINPASS=LocalPass!
+    volumes:
+      - ./conf/ldap:/ldif:ro
+    ports:
+      - "389:389"
+    restart: unless-stopped
+
+  phpldapadmin:
+    image: osixia/phpldapadmin:latest
+    container_name: phpldapadmin
+    environment:
+      PHPLDAPADMIN_LDAP_HOSTS: ldap
+      PHPLDAPADMIN_HTTPS: "false"
+    ports:
+      - "8081:80"
+    restart: unless-stopped
+    depends_on:
+      - ldap
